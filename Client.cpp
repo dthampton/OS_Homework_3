@@ -9,7 +9,6 @@
    
 int main(int argc, char const *argv[])
 {
-while(true) {
         int sock = 0, valread = 0;
         struct sockaddr_in serv_addr;
         std::string input;
@@ -37,6 +36,7 @@ while(true) {
             return -1;
         }
         
+    while(true) {
         std::getline(std::cin, input);
         
         std::cout << "Entered the do loop!\n";

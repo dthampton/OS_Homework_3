@@ -6,9 +6,10 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <iostream>
+#include <thread>
 #define PORT 8080
-int main(int argc, char const *argv[])
-{
+
+void ServerFunc(std::string &myStorage, std::string &theirStorage) {
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int opt = 1;
@@ -59,6 +60,20 @@ int main(int argc, char const *argv[])
         send(new_socket , reply.c_str() , strlen(reply.c_str()) , 0 );
         printf("Reply sent!\n");
     }
+}
+    
+int main(int argc, char const *argv[])
+{
+    std::string One_to_Two;
+    std::string Two_to_One;
+    
+    ServerFunc(One_to_Two, Two_to_One);
+    
+    std::thread firstUser(ServerFunc, One_to_Two, Two_to_One);
+    //std::thread secondUser(ServerFunc, Two_to_One, One_to_Two);
+    
+    firstUser.join();
+    //secondUser.join();
     return 0;
 }
 
