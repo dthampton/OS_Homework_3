@@ -39,8 +39,9 @@ int main(int argc, char const *argv[])
     while(true) {
         std::getline(std::cin, input);
         
-        std::cout << "Entered the do loop!\n";
+        std::cout << "Got the text!\n";
         send(sock , input.c_str() , strlen(input.c_str()) , 0 );
+        std::cout << "Sent the text!\n";
         valread = read( sock , buffer, 1024);
         printf("%s\n",buffer );
         std::cout << "Restarting the while loop!\n";

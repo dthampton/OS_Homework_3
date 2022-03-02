@@ -10,6 +10,10 @@
 #include <functional>
 #define PORT 8080
 
+std::string One_to_Two;
+std::string Two_to_One;
+bool mail[2] = {0};
+
 std::string convertToString(char* buffer, int size) {
     std::string holder = "";
     for(int i = 0; i < size; i++) holder = holder + buffer[i];
@@ -57,28 +61,31 @@ void ServerFunc(std::string myMessage, std::string theirMessage, int position, b
         perror("accept");
         exit(EXIT_FAILURE);
     }
+    std::string returnMessage = "Got the message!\n";
     while(true) {
+        for (int i = 0; i < 1024; i++) buffer[i] = 0;
         valread = read( new_socket , buffer, 1024);
         theirMessage = convertToString(buffer, 1024);
+        if(position == 0) mail[1] = true;
+        if(position == 1) mail[0] = true;
         printf("%s\n",buffer );
+        send(new_socket , returnMessage.c_str() , returnMessage.size() , 0 );
         
-        std::string preface = "The message you sent was: ";
-        std::string reply = preface + buffer;
-        printf("Trying to send the message...\n");
-        send(new_socket , reply.c_str() , strlen(reply.c_str()) , 0 );
-        printf("Reply sent!\n");
+        if(mail[position] == true) {
+            mail[position] = false;
+            std::string preface = "The message someone sent was: ";
+            std::string reply = preface + myMessage;
+            printf("Trying to send the message...\n");
+            send(new_socket , myMessage.c_str() , myMessage.size() , 0 );
+            printf("Reply sent!\n");
+        }
     }
 }
     
 int main(int argc, char const *argv[])
 {
-    std::string One_to_Two;
-    std::string Two_to_One;
-    
-    bool mail[2] = {0};
-
-    std::thread firstUser(ServerFunc, std::ref(One_to_Two), std::ref(Two_to_One), 0, mail);
-    std::thread secondUser(ServerFunc, std::ref(Two_to_One), std::ref(One_to_Two), 1, mail);
+    std::thread firstUser(ServerFunc, One_to_Two, Two_to_One, 0, mail);
+    std::thread secondUser(ServerFunc, Two_to_One, One_to_Two, 1, mail);
     
     firstUser.join();
     secondUser.join();
