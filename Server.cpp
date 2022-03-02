@@ -7,9 +7,16 @@
 #include <string.h>
 #include <iostream>
 #include <thread>
+#include <functional>
 #define PORT 8080
 
-void ServerFunc(std::string myStorage, std::string theirStorage) {
+std::string convertToString(char* buffer, int size) {
+    std::string holder = "";
+    for(int i = 0; i < size; i++) holder = holder + buffer[i];
+    return holder;
+}
+
+void ServerFunc(std::string myMessage, std::string theirMessage, int position, bool mail[2]) {
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int opt = 1;
@@ -52,6 +59,7 @@ void ServerFunc(std::string myStorage, std::string theirStorage) {
     }
     while(true) {
         valread = read( new_socket , buffer, 1024);
+        theirMessage = convertToString(buffer, 1024);
         printf("%s\n",buffer );
         
         std::string preface = "The message you sent was: ";
@@ -67,10 +75,10 @@ int main(int argc, char const *argv[])
     std::string One_to_Two;
     std::string Two_to_One;
     
-    ServerFunc(One_to_Two, Two_to_One);
-    
-    std::thread firstUser(ServerFunc, One_to_Two, Two_to_One);
-    std::thread secondUser(ServerFunc, Two_to_One, One_to_Two);
+    bool mail[2] = {0};
+
+    std::thread firstUser(ServerFunc, std::ref(One_to_Two), std::ref(Two_to_One), 0, mail);
+    std::thread secondUser(ServerFunc, std::ref(Two_to_One), std::ref(One_to_Two), 1, mail);
     
     firstUser.join();
     secondUser.join();
