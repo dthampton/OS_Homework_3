@@ -5,7 +5,27 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
+#include <thread>
 #define PORT 8080
+
+void checkMail(int sock, char buffer[]) {
+    int valread;
+    std::cout << "I have checkMail running.\n";
+    while(true) {
+        valread = read( sock , buffer, 1024);
+        std::cout << "I have a message!  The message is: ";
+        printf("%s\n",buffer );
+    }
+}
+
+void sendMail(int sock) {
+    std::string input;
+    std::cout << "I have sendMail running.\n";
+    while(true) {
+        std::getline(std::cin, input);
+        send(sock , input.c_str() , strlen(input.c_str()) , 0 );
+    }
+}
    
 int main(int argc, char const *argv[])
 {
@@ -36,15 +56,28 @@ int main(int argc, char const *argv[])
             return -1;
         }
         
-    while(true) {
-        std::getline(std::cin, input);
+        std::string start = "Greetings!\n";
+        send(sock , start.c_str() , strlen(start.c_str()) , 0 );
         
-        std::cout << "Got the text!\n";
-        send(sock , input.c_str() , strlen(input.c_str()) , 0 );
-        std::cout << "Sent the text!\n";
-        valread = read( sock , buffer, 1024);
-        printf("%s\n",buffer );
-        std::cout << "Restarting the while loop!\n";
-    }
+        std::thread check(checkMail, sock, buffer);
+        std::thread send(sendMail, sock);
+//    while(true) {
+//        std::getline(std::cin, input);
+//        
+//        std::cout << "Got the text!\n";
+//        send(sock , input.c_str() , strlen(input.c_str()) , 0 );
+//        std::cout << "Sent the text!\n";
+//        valread = read( sock , buffer, 1024);
+//        printf("%s\n",buffer );
+//        std::cout << "Restarting the while loop!\n";
+//    }
+
+    check.join();
+    send.join();
     return 0;
 }
+
+
+
+
+//Keep track of the process id?
