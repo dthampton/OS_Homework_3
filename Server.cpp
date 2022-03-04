@@ -7,11 +7,18 @@
 #include <string.h>
 #include <iostream>
 #include <thread>
+#include<signal.h>
 #define PORT 8080
 
 std::string One_to_Two;
 std::string Two_to_One;
 bool mail[2] = {0};
+
+void sig_handler(int signo)
+{
+  if (signo == SIGINT)
+    printf(" Received SIGINT\n");
+}
 
 std::string convertToString(char* buffer, int size) {
     std::string holder = "";
@@ -133,6 +140,8 @@ void ServerFunc(std::string myMessage, std::string theirMessage, int position, b
     
 int main(int argc, char const *argv[])
 {
+    if (signal(SIGINT, sig_handler) == SIG_ERR) printf("\ncan't catch SIGINT\n");
+    
     std::cout << "Starting the threads.\n";
     std::thread firstUser(ServerFunc, One_to_Two, Two_to_One, 0, mail);
     std::thread secondUser(ServerFunc, Two_to_One, One_to_Two, 1, mail);
