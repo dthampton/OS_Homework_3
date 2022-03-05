@@ -1,8 +1,4 @@
-// OSLab3ChatServer
-// Server.cpp
-// Downloaded from https://alaska.instructure.com/courses/6364/files/1441843?module_item_id=377680
-// Last modified on 2022-03-04 by Justyn Durnford and Dawson Hampton
-// Client side C++ program to demonstrate Socket programming.
+// Server side C/C++ program to demonstrate Socket programming
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -18,7 +14,6 @@ std::string One_to_Two;
 std::string Two_to_One;
 bool mail[2] = {0};
 bool Shutdown = false;
-bool userConnected = false;
 
 void sig_handler(int signo)
 {
@@ -125,12 +120,6 @@ void ServerFunc(std::string myMessage, std::string theirMessage, int position, b
     
     std::string success = "Connection Successful!  Please type a message and enter 'BYE' to stop the server.\n";
     send(new_socket , success.c_str() , success.length() , 0 );
-    
-    std::string onlyOne = "\nYou are the only one connected!  Go get a friend!\n";
-    if (!userConnected) {
-        send(new_socket , onlyOne.c_str() , onlyOne.length() , 0 );
-        userConnected = true;
-    }
     
     std::thread get(getMail, new_socket, position);
     std::thread send(sendMail, new_socket, position);

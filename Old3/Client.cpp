@@ -1,8 +1,4 @@
-// OSLab3ChatServer
-// Client.cpp
-// Downloaded from https://alaska.instructure.com/courses/6364/files/1441843?module_item_id=377680
-// Last modified on 2022-03-04 by Justyn Durnford and Dawson Hampton
-// Client side C++ program to demonstrate Socket programming.
+// Client side C/C++ program to demonstrate Socket programming
 #include <stdio.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -41,7 +37,7 @@ void sendMail(int sock) {
    
 int main(int argc, char const *argv[])
 {
-        std::cout << "Trying to connect.  If this takes longer than a split second, please quit with ctrl-C and restart the Client.\n";
+        std::cout << "Trying to connect.  If this takes longer than two seconds, please quit and restart the Client.\n";
         int sock = 0, valread = 0;
         struct sockaddr_in serv_addr;
         std::string input;
