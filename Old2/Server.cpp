@@ -13,7 +13,6 @@
 std::string One_to_Two;
 std::string Two_to_One;
 bool mail[2] = {0};
-bool Shutdown = false;
 
 void sig_handler(int signo)
 {
@@ -33,7 +32,7 @@ void sendMail(int new_socket, int position) {
     std::string reply;
     
     preface = "--";
-    while(!Shutdown) {
+    while(true) {
         if (position == 0) myMessage = One_to_Two;
         else myMessage = Two_to_One;
         
@@ -45,8 +44,6 @@ void sendMail(int new_socket, int position) {
             printf("Message sent!\n\n");
         }
     }
-    std::string goodbye = ">>The server has been instructed to shut down.  Goodbye!";
-    send(new_socket , goodbye.c_str() , goodbye.size() , 0 );
 }
 
 void getMail(int new_socket, int position) {
@@ -54,17 +51,12 @@ void getMail(int new_socket, int position) {
     std::string theirMessage;
     char buffer[1024] = {0};
     
-    while(!Shutdown) {  
+    while(true) {  
         if (position == 1) theirMessage = One_to_Two;
         else theirMessage = Two_to_One;
-        
         for (int i = 0; i < 1024; i++) buffer[i] = 0;
         valread = read( new_socket , buffer, 1024);
         theirMessage = convertToString(buffer, 1024);
-        if (theirMessage.substr(0,  3) == "BYE") {Shutdown = true;
-            std::cout << "Shutdown detected!\n";
-            exit(0);
-        }
         
         if (position == 1) {One_to_Two = theirMessage; sleep(1); mail[0] = true;}
         else {Two_to_One = theirMessage; sleep(1); mail[1] = true;}
@@ -126,8 +118,6 @@ void ServerFunc(std::string myMessage, std::string theirMessage, int position, b
     
     get.join();
     send.join();
-    
-    std::cout <<"Quitting!\n";
 }
     
 int main(int argc, char const *argv[])

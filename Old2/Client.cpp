@@ -8,21 +8,11 @@
 #include <thread>
 #define PORT 8080
 
-std::string convertToString(char* buffer, int size) {
-    std::string holder = "";
-    for(int i = 0; i < size; i++) holder = holder + buffer[i];
-    return holder;
-}
-
-void checkMail(int sock) {
-    char buffer[1024] = {0};
+void checkMail(int sock, char buffer[]) {
     int valread;
-    std::string convert;
     while(true) {
         valread = read( sock , buffer, 1024);
-        convert = convertToString(buffer, 1024);
-        printf("%s\n", buffer);
-        if (convert.substr(0,  56) == ">>The server has been instructed to shut down.  Goodbye!") exit(0);
+        printf("%s\n",buffer );
     }
 }
 
@@ -41,6 +31,7 @@ int main(int argc, char const *argv[])
         int sock = 0, valread = 0;
         struct sockaddr_in serv_addr;
         std::string input;
+        char buffer[1024] = {0};
         if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         {
             printf("\n Socket creation error \n");
@@ -67,7 +58,7 @@ int main(int argc, char const *argv[])
         std::string start = "A user has connected.";
         send(sock , start.c_str() , strlen(start.c_str()) , 0 );
         
-        std::thread check(checkMail, sock);
+        std::thread check(checkMail, sock, buffer);
         std::thread send(sendMail, sock);
 
     check.join();
