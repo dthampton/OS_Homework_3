@@ -1,0 +1,28 @@
+Requirements: 
+Modify the codes to do the following:
+
+1) In the current version there is only one client. But you must create two different 
+clients. ---DONE---
+
+2) Currently the messages are hardcoded in the program. But your code must read 
+the client messages from the user. ---DONE---
+
+3) Currently the server is accepting a client message (request) and sending a 
+response message to the same client. In your new version, the server should 
+forward the accepted message from one client to the other client. ---DONE---
+
+4) The server should work properly only when two clients are up and connecting to 
+it. If there is only one client connecting to the server then, the server will send a 
+message complaining “only one client is up”
+
+5) The process should not end only after one pass of message between server and 
+client as it is now. Server will only stop if one of the clients sends ‘BYE’ message
+
+6) The server process should be designed in such a way so that it cannot be 
+aborted by hitting ctrl-c on that terminal ---DONE---
+
+7) For the sake of simplicity, assume that both your client and servers are on the 
+same machine i.e. localhost (127.0.0.1) ---DONE---
+
+8) You may need to send the client process pids to the server to establish the 
+connection ---DONE---
